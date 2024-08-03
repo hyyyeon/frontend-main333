@@ -302,6 +302,23 @@ app.post('/upload-profile-picture', authenticateToken, upload.single('profilePic
 });
 
 
+// @@@@@@ 날짜에 해당하는 한 줄평 가져오기
+app.get('/get-diary-summary/:date', authenticateToken, (req, res) => {
+  const userId = req.user.user_id;
+  const date = req.params.date;
+
+  const query = 'SELECT one FROM diary WHERE user_id = ? AND date = ?';
+
+  connection.query(query, [userId, date], (error, results) => {
+    if (error) {
+      res.status(500).json({ isSuccess: false, message: 'Database query failed' });
+    } else {
+      res.status(200).json({ isSuccess: true, summary: results[0] ? results[0].one : '' });
+    }
+  });
+});
+
+
 
 // 서버 실행
 app.listen(port, () => {
